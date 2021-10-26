@@ -1,0 +1,17 @@
+{
+  "name": "calendario-examenes",
+  "version": "1.0.0",
+  "description": "un calendario de examenes para la ulpgc",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "M1S0",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "fastify": "^3.22.1",
+    "fastify-static": "^4.4.2"
+  }
+}
