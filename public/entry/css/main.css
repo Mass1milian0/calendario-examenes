@@ -1,0 +1,22 @@
+.split{
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+#left-container{
+    left: 0;
+    width: 50%;
+
+}
+#right-container{
+    right: 0;
+    width: 50%;
+}
