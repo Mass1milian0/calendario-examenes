@@ -26,7 +26,14 @@ fastify.register(require('fastify-static'), {
 fastify.get('/public', function (req, reply) {
     return reply.sendFile('index.html')
   })
-  
+
+fastify.get('/', { websocket: true }, (connection /* SocketStream */, req /* FastifyRequest */) => {
+  connection.socket.on('message', message => {
+    if(message.operation == "handshake"){
+      connection.socket.send('ack')
+    }
+  })
+})
 
 const start = async () => {
   try {
