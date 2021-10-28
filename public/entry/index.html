@@ -1,4 +1,5 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -6,15 +7,42 @@
     <title>Calendatrio Entry</title>
     <link rel="stylesheet" href="./css/main.css">
 </head>
-    <body>
-        <h1>Entrada de datos</h1>
-        <div class="split" >
-            <div id="left-container">
-               
-            </div>
-            <div id="right-container">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, voluptatum. Sit iste quasi esse officiis possimus placeat officia sequi asperiores culpa eum? Corrupti illum commodi ipsam perferendis dolorem. Id, necessitatibus!</p>
-            </div>
+
+<body>
+    <h1>Entrada de datos</h1>
+    <div class="split">
+        <div id="left-container">
+            <p>Fecha de examen: </p>
+            <input type="date"></input>
+            <p>Facultad: </p>
+            <select>
+                <option>test1</option>
+                <option>test2</option>
+            </select>
+            <p>Curso: </p>
+            <select>
+                <option>test1</option>
+                <option>test2</option>
+            </select>
+            <button type="button">Insertar</button>
         </div>
-    </body>
+        <div id="right-container">
+            <table>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Facultad</th>
+                    <th>Curso</th>
+                  </tr>
+                  <tr>
+                      <td>test1</td>
+                      <td>test2</td>
+                      <td>test3</td>
+                      <td><button>Delete</button></td>
+                  </tr>
+            </table>
+        </div>
+    </div>
+    <script src="./js/main.js"></script>
+</body>
+
 </html>

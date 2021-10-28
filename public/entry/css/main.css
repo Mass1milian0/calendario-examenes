@@ -7,14 +7,39 @@
   z-index: 1;
   top: 0;
   overflow-x: hidden;
-  padding-top: 50px;
+  padding-top: 10px;
   padding-left: 20px;
   padding-right: 20px;
 }
+table{
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 1px;
+  border-color: black;
+  border-spacing: 0;
+}
+th{
+  border-bottom: 1px solid;
+}
+th,td{
+  
+  border-left: 1px solid;
+}
+p{
+  padding-left: 3%;
+}
 #left-container{
+    display: flex;
+    flex-direction: row;
     left: 0;
     width: 50%;
+    height: 7%;
+    align-items:center;
+    padding-right: 5%; 
 
+}
+button{
+  margin-left: 2%;
 }
 #right-container{
     right: 0;
