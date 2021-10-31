@@ -14,26 +14,33 @@
         <div id="left-container">
             <p>Fecha de examen: </p>
             <input type="date"></input>
-            <p>Facultad: </p>
-            <select>
+            <p>Universidad: </p>
+            <select id="universidad">
+                <option>test1</option>
+                <option>test2</option>
+            </select>
+            <p>Carrera: </p>
+            <select id="carrera">
                 <option>test1</option>
                 <option>test2</option>
             </select>
             <p>Curso: </p>
-            <select>
+            <select id="curso">
                 <option>test1</option>
                 <option>test2</option>
             </select>
             <button type="button">Insertar</button>
         </div>
         <div id="right-container">
-            <table>
+            <table id="mainTableShow">
                 <tr>
+                    <th>Universidad/th>
                     <th>Fecha</th>
-                    <th>Facultad</th>
+                    <th>Carrera</th>
                     <th>Curso</th>
                   </tr>
                   <tr>
+                      <td>test5</td>
                       <td>test1</td>
                       <td>test2</td>
                       <td>test3</td>
@@ -42,6 +49,7 @@
             </table>
         </div>
     </div>
+    <script src="./js/rest.js"></script>
     <script src="./js/main.js"></script>
 </body>
 
