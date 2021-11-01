@@ -25,6 +25,7 @@ function resetOptions() {
             i.innerHTML = "<option>Selecione Una</option>"
     }
 }
+//TODO connect dates to db
 document.querySelector("#universidad").addEventListener("change", function () {
     console.log("Sent msg to WS");
     resetOptions()
