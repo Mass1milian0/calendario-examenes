@@ -11,43 +11,49 @@
 <body>
     <h1>Entrada de datos</h1>
     <div class="split">
-        <div id="left-container">
-            <p>Fecha de examen: </p>
-            <input type="date"></input>
-            <p>Universidad: </p>
-            <select id="universidad">
-                <option>Selecione Una</option>
-            </select>
-            <p>Carrera: </p>
-            <select id="carrera">
-                <option>Selecione Una</option>
-            </select>
-            <p>Curso: </p>
-            <select id="curso">
-                <option>Selecione Una</option>
-                <option>1º</option>
-                <option>2º</option>
-                <option>3º</option>
-                <option>4º</option>
-                <option>5º</option>
-            </select>
-            <button type="button">Insertar</button>
+        <div class="flex-row">
+            <div id="left-container">
+                <label for="date">Fecha</label>
+                <input type="date" id="date"></input>
+                <label for="universidad">Universidad</label>
+                <select id="universidad">
+                    <option>Selecione Una</option>
+                </select>
+                <label for="carrera">Carrera</label>
+                <select id="carrera">
+                    <option>Selecione Una</option>
+                </select>
+                <label for="curso">Curso</label>
+                <select id="curso">
+                    <option>Selecione Una</option>
+                    <option>1º</option>
+                    <option>2º</option>
+                    <option>3º</option>
+                    <option>4º</option>
+                    <option>5º</option>
+                </select>
+                <button type="button" id="submit">Insertar</button>
+            </div>
+            <div class="left-container">
+                <label for="nombreExamen">Nombre</label>
+                <input type="text" id="nombreExamen" placeholder="nombre examen"></input>
+            </div>
         </div>
         <div id="right-container">
             <table id="mainTableShow">
                 <tr>
-                    <th>Universidad/th>
+                    <th>Universidad</th>
                     <th>Fecha</th>
                     <th>Carrera</th>
                     <th>Curso</th>
-                  </tr>
-                  <tr>
-                      <td>test5</td>
-                      <td>test1</td>
-                      <td>test2</td>
-                      <td>test3</td>
-                      <td><button>Delete</button></td>
-                  </tr>
+                </tr>
+                <tr>
+                    <td>test5</td>
+                    <td>test1</td>
+                    <td>test2</td>
+                    <td>test3</td>
+                    <td><button>Delete</button></td>
+                </tr>
             </table>
         </div>
     </div>

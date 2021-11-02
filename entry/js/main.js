@@ -19,13 +19,12 @@ function loadOptions(context, options, get) {
     }
 }
 function resetOptions() {
-    let selectors = document.querySelectorAll("select")
-    for (let i of selectors) {
-        if (i.id != "universidad" || i.id != "curso")
-            i.innerHTML = "<option>Selecione Una</option>"
-    }
+    let selectors = document.querySelectorAll("#carrera")
+    selectors.innerHTML = "<option>Selecione Una</option>"
 }
-//TODO connect dates to db
+document.querySelector("#submit").addEventListener("click",function(){
+    //TODO connect dates to db
+})
 document.querySelector("#universidad").addEventListener("change", function () {
     console.log("Sent msg to WS");
     resetOptions()

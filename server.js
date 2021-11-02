@@ -8,7 +8,7 @@ fastify.register(require('fastify-websocket'))
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: '1234',
+  password: process.env.DB_PASSWD,
   database: 'db',
   port: 3306
 });
@@ -35,16 +35,7 @@ fastify.get('/entry', function (req, reply) {
   return reply.sendFile('./entry/index.html')
 })
 
-function get(dataExpression) {
-  //pool.query(dataExpression).then((data) => {
-  //  console.log(data)
-  //})
-  console.log("querying: " + dataExpression);
-  pool.query(dataExpression).then((data) => {
-    console.log(data);
-  }).catch((err) => {
-    console.log(err);
-  })
+function dbQuery(dataExpression) {
   return pool.query(dataExpression)
 }
 
@@ -53,20 +44,24 @@ fastify.get('/wss/', { websocket: true }, async (connection /* SocketStream */, 
   connection.socket.send(JSON.stringify({
     operation: "wssUpdate",
     content: {
-      universidades: await get("SELECT nombreUniversidad FROM `universidades`")
+      universidades: await dbQuery("SELECT nombreUniversidad FROM `universidades`")
     }
   }))
   connection.socket.on('message', async message => {
     let msg = JSON.parse(message)
     if (msg.operation == "getFromDb") {
-      console.log(msg.content);
       connection.socket.send(JSON.stringify({
         operation: "updateFromDb",
         context: msg.context,
         get: msg.get,
-        content: await get(msg.content)
+        content: await dbQuery(msg.content)
       }))
-      console.log("Responded to websocket");
+    }
+    if(msg.operation == "sendToDb" /* TODO on production origin check*/){
+      let response = await dbQuery(msg.content)
+      connection.socket.send(JSON.stringify({
+        response: response
+      }))
     }
   })
 })
