@@ -13,8 +13,6 @@
     <div class="split">
         <div class="flex-row">
             <div id="left-container">
-                <label for="date">Fecha</label>
-                <input type="date" id="date"></input>
                 <label for="universidad">Universidad</label>
                 <select id="universidad">
                     <option>Selecione Una</option>
@@ -37,24 +35,28 @@
             <div class="left-container">
                 <label for="nombreExamen">Nombre</label>
                 <input type="text" id="nombreExamen" placeholder="nombre examen"></input>
+                <label for="Especial">Convocatoria Especial</label>
+                <input type="checkbox" id="Especial"></input>
             </div>
-        </div>
-        <div id="right-container">
-            <table id="mainTableShow">
-                <tr>
-                    <th>Universidad</th>
-                    <th>Fecha</th>
-                    <th>Carrera</th>
-                    <th>Curso</th>
-                </tr>
-                <tr>
-                    <td>test5</td>
-                    <td>test1</td>
-                    <td>test2</td>
-                    <td>test3</td>
-                    <td><button>Delete</button></td>
-                </tr>
-            </table>
+            <div class="left-container">
+                <label for="date">Fecha</label>
+                <input type="date" id="date"></input>
+                <label for="Especial">Convocatoria Extraordinaria</label>
+                <input type="checkbox" id="Especial"></input>
+            </div>
+            <div id="left-container">
+                <table id="mainTableShow">
+                    <tr class="index">
+                        <th>Universidad</th>
+                        <th>Nombre</th>
+                        <th>Fecha</th>
+                        <th>Carrera</th>
+                        <th>Curso</th>
+                        <th>Especial</th>
+                        <th>Extraordinaria</th>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
     <script src="/entry/js/rest.js"></script>

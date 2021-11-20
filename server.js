@@ -44,7 +44,8 @@ fastify.get('/wss/', { websocket: true }, async (connection /* SocketStream */, 
   connection.socket.send(JSON.stringify({
     operation: "wssUpdate",
     content: {
-      universidades: await dbQuery("SELECT nombreUniversidad FROM `universidades`")
+      universidades: await dbQuery("SELECT universidad FROM `facultades`"),
+      data: await dbQuery("SELECT * from `examenes`")
     }
   }))
   connection.socket.on('message', async message => {
