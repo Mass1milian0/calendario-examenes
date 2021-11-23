@@ -30,6 +30,12 @@ th,td{
 p{
   padding-left: 3%;
 }
+.missing{
+  border-width: 2px;
+  border-style: solid;
+  border-color: red;
+  border-radius: 5px;
+}
 .flex-row {
   display: flex;
   flex-direction: column;
@@ -42,6 +48,16 @@ p{
     width: 50%;
     height: 2%;
     align-items:center;
+    padding-right: 5%; 
+    padding-bottom: 40px;
+
+}
+#left-container2{
+    display: flex;
+    flex-direction: row;
+    left: 0;
+    width: 50%;
+    justify-items: center;
     padding-right: 5%; 
     padding-bottom: 40px;
 

@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div class="w-screen flex lg:flex-row flex-col">
     <div class="lg:w-3/5 w-full lg:my-auto border-2 border-black lg:mx-16 my-10">
       <Calendario />
@@ -19,19 +20,22 @@
       </form>
     </div>
   </div>
+  </client-only>
 </template>
 
+
 <script>
+const HOST = document.location.origin //FIXME cosa de alex
 import Calendario from '~/components/Calendar.vue'
 import CheckBox from '~/components/CheckBox.vue'
 import Selector from '~/components/Selector.vue'
 export default {
   components: { Calendario, CheckBox, Selector },
   computed: {
-    universidadOptions () {
-      // Cambiar const por let.
-      const options = []
-      // Hacer cosas en la API para sacar las opciones de universidades.
+    async universidadOptions () {
+      let options = []
+      //response = await fetch(HOST + "/api/universidades")
+      //console.log(response)
       return options
     },
     carreraOptions () {
@@ -41,10 +45,7 @@ export default {
       return options
     },
     cursoOptions () {
-      // Cambiar const por let.
-      const options = []
-      // Hacer cosas en la API para sacar las opciones de cursos.
-      return options
+      return [1,2,3,4,5]
     }
   },
   methods: {

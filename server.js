@@ -34,6 +34,16 @@ fastify.register(require('fastify-static'), {
 fastify.get('/entry', function (req, reply) {
   return reply.sendFile('./entry/index.html')
 })
+fastify.get('/api/get/universidades', async function (req, reply) {
+  return reply.send(await dbQuery("SELECT DISTINCT universidad FROM `facultades`"))
+})
+fastify.get('/api/get/carreras', function (req, reply) {
+  return reply.send()
+})
+
+fastify.get('/api/get/Universidades', function (req, reply) {
+  return reply.send()
+})
 
 function dbQuery(dataExpression) {
   return pool.query(dataExpression)
@@ -44,7 +54,7 @@ fastify.get('/wss/', { websocket: true }, async (connection /* SocketStream */, 
   connection.socket.send(JSON.stringify({
     operation: "wssUpdate",
     content: {
-      universidades: await dbQuery("SELECT universidad FROM `facultades`"),
+      universidades: await dbQuery("SELECT DISTINCT universidad FROM `facultades`"),
       data: await dbQuery("SELECT * from `examenes`")
     }
   }))
