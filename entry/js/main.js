@@ -149,7 +149,7 @@ function load_socket() {
     socket.addEventListener("message", function (event) {
         let msg = JSON.parse(event.data);
         console.log("Recived message: " + msg);
-        if (msg.operation == "wssUpdate") {
+        if (msg.operation == "wssWelcome") {
             console.log("recieved");
             let universidades = msg.content.universidades;
             let data = msg.content.data;

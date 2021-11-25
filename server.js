@@ -3,7 +3,6 @@ const mysql = require('mysql2/promise');
 require('dotenv').config()
 const fastify = require('fastify')({ logger: false })
 const port = process.env.PORT || 3000
-const nuxtRoutes = require('./.nuxt/routes.json');
 fastify.register(require('fastify-websocket'))
 const pool = mysql.createPool({
   host: 'localhost',
@@ -13,11 +12,6 @@ const pool = mysql.createPool({
   port: 3306
 });
 console.log("Connected!")
-fastify.register(require('fastify-nuxtjs')).after(() => {
-  nuxtRoutes.forEach((nuxtRoute) => {
-    fastify.nuxt(nuxtRoute.path);
-  })
-})
 
 const start = async () => {
   try {
@@ -34,16 +28,6 @@ fastify.register(require('fastify-static'), {
 fastify.get('/entry', function (req, reply) {
   return reply.sendFile('./entry/index.html')
 })
-fastify.get('/api/get/universidades', async function (req, reply) {
-  return reply.send(await dbQuery("SELECT DISTINCT universidad FROM `facultades`"))
-})
-fastify.get('/api/get/carreras', function (req, reply) {
-  return reply.send()
-})
-
-fastify.get('/api/get/Universidades', function (req, reply) {
-  return reply.send()
-})
 
 function dbQuery(dataExpression) {
   return pool.query(dataExpression)
@@ -51,8 +35,16 @@ function dbQuery(dataExpression) {
 
 fastify.get('/wss/', { websocket: true }, async (connection /* SocketStream */, req /* FastifyRequest */) => {
   console.log("client connected!");
+  async function updateWss() {
+    connection.socket.send(JSON.stringify({
+      operation: "wssUpdate",
+      content: {
+        data: await dbQuery("SELECT * from `examenes`")
+      }
+    }))
+  }
   connection.socket.send(JSON.stringify({
-    operation: "wssUpdate",
+    operation: "wssWelcome",
     content: {
       universidades: await dbQuery("SELECT DISTINCT universidad FROM `facultades`"),
       data: await dbQuery("SELECT * from `examenes`")
@@ -66,13 +58,14 @@ fastify.get('/wss/', { websocket: true }, async (connection /* SocketStream */, 
         context: msg.context,
         get: msg.get,
         content: await dbQuery(msg.content)
-      }))
+      }), updateWss())
+
     }
-    if(msg.operation == "sendToDb" /* TODO on production origin check*/){
+    if (msg.operation == "sendToDb" /* TODO on production origin check*/) {
       let response = await dbQuery(msg.content)
       connection.socket.send(JSON.stringify({
         response: response
-      }))
+      }), updateWss())
     }
   })
 })
