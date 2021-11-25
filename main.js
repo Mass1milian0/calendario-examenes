@@ -31,7 +31,9 @@ myEvents = [
   ],
   
   $('#evoCalendar').evoCalendar({
-    calendarEvents: myEvents
+    calendarEvents: myEvents,
+    theme: "Midnight Blue",
+    language: 'es'
   });
   
 function load_socket() {
