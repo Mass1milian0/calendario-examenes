@@ -131,6 +131,7 @@ document.querySelector("#universidad").addEventListener("change", async function
             operation: "getFromDb",
             context: "#carrera",
             get: "facultad",
+            forServer: true,
             content: "SELECT facultad FROM facultades where universidad = '" + this.options[this.selectedIndex].text + "'"
         }))
     }
@@ -157,7 +158,10 @@ function load_socket() {
             loadUniMenuOptions(universidades[0])
         }
         if (msg.operation == "updateFromDb") {
-            loadOptions(msg.context, msg.content, msg.get)
+            if (msg.forServer = True) {
+                loadOptions(msg.context, msg.content, msg.get)
+            }
+            
         }
         if (msg.operation == "ResponseFromDb") {
             if (msg.type == "QueryResponse") {

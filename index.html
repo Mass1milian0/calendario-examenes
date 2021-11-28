@@ -7,43 +7,45 @@
 <script src="/jquery.min.js"></script>
 <script src="/evo-calendar/js/evo-calendar.min.js"></script>
 <link rel="stylesheet" href="/style.css"></link>
-<div class="label">
-    <div class="dropdown">
-        <label for="university" class="col-sm-2 col-form-label">Universidad </label>
-            <select class="form-select" aria-label="Universidad" id="university">
-            <option>Seleccione a una</option>
-        </select>
+<header>
+    <img src="/assets/images/elRinconBanner.png" alt="ElRinconDelEstudiante" id="header-image" id="headerImage" class="img-fluid rounded" style="height: 100px; width: 450px"/>
+</header>
+<div class="centered">
+    <div class="label">
+        <div class="dropdown">
+            <label for="university" class="col-sm-2 col-form-label">Universidad </label>
+                <select class="form-select" aria-label="Universidad" id="university">
+                <option>Seleccione a una</option>
+            </select>
+        </div>
+        <div class="dropdown">
+            <label for="grado" class="col-sm-2 col-form-label">Grado </label>
+                <select class="form-select" aria-label="Grado" id="grado">
+                <option>Seleccione a una</option>
+            </select>
+        </div>
+        <div class="dropdown">
+            <label for="curso" class="col-sm-2 col-form-label">Curso </label>
+                <select class="form-select" aria-label="Curso" id="curso">
+                <option>Seleccione a una</option>
+                <option>1º</option>
+                <option>2º</option>
+                <option>3º</option>
+                <option>4º</option>
+                <option>5º</option>
+            </select>
+        </div>
+        <div class="checks">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Convocatoria Especial</label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Convocatoria Extraordinaria</label>
+        </div>
+        </div>
     </div>
-    <div class="dropdown">
-        <label for="university" class="col-sm-2 col-form-label">Universidad </label>
-            <select class="form-select" aria-label="Universidad" id="university">
-            <option>Seleccione a una</option>
-        </select>
-    </div>
-    <div class="dropdown">
-        <label for="university" class="col-sm-2 col-form-label">Universidad </label>
-            <select class="form-select" aria-label="Universidad" id="university">
-            <option>Seleccione a una</option>
-        </select>
-    </div>
-    <div class="checks">
-    <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-        <label class="form-check-label" for="flexSwitchCheckDefault">Convocatoria Especial</label>
-      </div>
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-        <label class="form-check-label" for="flexSwitchCheckDefault">Convocatoria Extraordinaria</label>
-      </div>
-    </div>
-</div>
 <div id="evoCalendar"></div>
-<div class="footer">
-    <div>
-        <img style="width: 3%;" src="./assets/images/marca_de_agua_.png" class="img-thumbnail rounded-circle" alt="discord image">
-    </div>
-    <div>
-        <p>Made by M1S0</p>
-    </div>
 </div>
 <script src="main.js"></script>

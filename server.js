@@ -57,6 +57,7 @@ fastify.get('/wss/', { websocket: true }, async (connection /* SocketStream */, 
         operation: "updateFromDb",
         context: msg.context,
         get: msg.get,
+        forServer: msg.forServer,
         content: await dbQuery(msg.content)
       }), updateWss())
 
