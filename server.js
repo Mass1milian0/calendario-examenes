@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: process.env.DB_PASSWD,
-  database: 'db',
+  database: 'xux6i28tzurvsxdc',
   port: 3306
 });
 console.log("Connected!")
@@ -59,7 +59,7 @@ fastify.get('/wss/', { websocket: true }, async (connection /* SocketStream */, 
         get: msg.get,
         forServer: msg.forServer,
         content: await dbQuery(msg.content)
-      }), updateWss())
+      }))
 
     }
     if (msg.operation == "sendToDb" /* TODO on production origin check*/) {

@@ -1,41 +1,111 @@
 const HOST = location.origin.replace(/^http/, 'ws') + "/wss/";
 let socket;
-
+let eventsCache;
 load_socket();
-
-myEvents = [
-  {
-    id: "required-id-1",
-    name: "New Year",
-    date: "Wed Jan 01 2020 00:00:00 GMT-0800 (Pacific Standard Time)",
-    type: "holiday",
-    description: "lorem ipsum dolor sit amet er sit amet, consectetur adipisicing el iter",
-    everyYear: true
-  },
-  {
-    id: "required-id-2",
-    name: "Valentine's Day",
-    date: "Fri Feb 14 2020 00:00:00 GMT-0800 (Pacific Standard Time)",
-    type: "holiday",
-    everyYear: true,
-    color: "#222"
-  },
-  {
-    id: "required-id-3",
-    name: "Custom Date",
-    badge: "08/03 - 08/05",
-    date: ["August/03/2020", "August/05/2020"],
-    description: "Description here",
-    type: "event"
-  },
-  // more events here
-],
-
-  $('#evoCalendar').evoCalendar({
-    calendarEvents: myEvents,
-    theme: "Midnight Blue",
-    language: 'es'
-  });
+function objectBuilderForCalendarEvents(universidad, facultad, nombreExamen, fechaExamen, convocatoriaEspecial, convocatoriaExtraordinaria, curso) {
+  const regex = /[0-9]{4}-[0-9]{2}-[0-9]{2}/i;
+  UID = universidad + "," + facultad + "," + nombreExamen + "," + curso + "," + convocatoriaEspecial + "," + convocatoriaExtraordinaria + "," + regex.exec(fechaExamen)
+  let event
+  if (convocatoriaEspecial) {
+    event = {
+      id: UID,
+      name: facultad,
+      description: universidad + " , " + nombreExamen + ", " + facultad + ",\n" + "CONVOCATORIA ESPECIAL ," + "\n" + curso + "º de carrera",
+      date: regex.exec(fechaExamen),
+      type: "event"
+    }
+  } else if (convocatoriaExtraordinaria) {
+    event = {
+      id: UID,
+      name: facultad,
+      description: universidad + " , " + nombreExamen + ", " + facultad + " ,\n" + "CONVOCATORIA EXTRAORDINARIA ," + "\n" + curso + "º de carrera",
+      date: regex.exec(fechaExamen),
+      type: "event"
+    }
+  } else {
+    event = {
+      id: UID,
+      name: facultad,
+      description: universidad + " , " +  nombreExamen + ", " + facultad + " ,\n" + "ORDINARIA ," + "\n" + curso + "º de carrera",
+      date: regex.exec(fechaExamen),
+      type: "event"
+    }
+  }
+  return event
+}
+function initCalendar(data, nonDestructive = false) {
+  let destructed = false
+  let lastDateSelected;
+  let events = data
+  if (nonDestructive == false) {
+    events = []
+    for (let i of data) {
+      events.push(objectBuilderForCalendarEvents(i.universidad, i.facultad, i.nombreExamen, i.fechaExamen, i.convocatoriaEspecial, i.convocatoriaExtraordinaria, i.curso))
+    }
+    eventsCache = events
+  } else {
+    lastDateSelected = $('#evoCalendar').evoCalendar('getActiveDate')
+    destructed = true
+    $('#evoCalendar').evoCalendar('destroy')
+  }
+  if(!destructed) {
+    $('#evoCalendar').evoCalendar({
+      calendarEvents: events,
+      theme: "Midnight Blue",
+      language: 'es',
+      format: "yyyy/mm/dd"
+    });
+  } else {
+    $('#evoCalendar').evoCalendar({
+      calendarEvents: events,
+      theme: "Midnight Blue",
+      language: 'es',
+      format: "yyyy/mm/dd",
+    });
+    $('#evoCalendar').evoCalendar('selectDate', lastDateSelected)
+  }
+}
+function filterNonDestructive() {
+  let activeFilters = []
+  if (document.querySelector("#university").selectedIndex != 0) {
+    activeFilters.push((element) => {
+      let UID = element.id.split(',')
+      if (UID[0] != document.querySelector("#university").options[document.querySelector("#university").selectedIndex].text) {
+        return true
+      }
+    })
+  }
+  if (document.querySelector("#grado").selectedIndex != 0) {
+    activeFilters.push((element) => {
+      let UID = element.id.split(',')
+      if (UID[1] != document.querySelector("#grado").options[document.querySelector("#grado").selectedIndex].text) {
+        return true
+      }
+    })
+  } 
+  if (document.querySelector("#curso").selectedIndex != 0) {
+    activeFilters.push((element) => {
+      let UID = element.id.split(',')
+      if (UID[3] != document.querySelector("#curso").options[document.querySelector("#curso").selectedIndex].text[0]) {
+        return true
+      }
+    })
+  }
+  activeFilters.push((element) => {
+    let UID = element.id.split(',')
+    if (UID[4] != document.querySelector("#convEspecial").checked) {
+      return true
+    }
+  })
+  activeFilters.push((element) => {
+    let UID = element.id.split(',')
+    if (UID[5] != document.querySelector("#convExtra").checked) {
+      return true
+    }
+  })
+  const filteredArray = eventsCache.filter((event) => activeFilters.every((filter) => !filter(event)));
+  initCalendar(filteredArray,true)
+}
 function buildOption(text) {
   let option = document.createElement('option');
   option.innerHTML = text;
@@ -66,6 +136,19 @@ $('#university').on('change', function () {
     get: "facultad",
     content: "SELECT facultad FROM facultades where universidad = '" + this.options[this.selectedIndex].text + "'"
   }))
+  filterNonDestructive()
+})
+$("#grado").on('change', function () {
+  filterNonDestructive()
+})
+$("#curso").on('change', function () {
+  filterNonDestructive()
+})
+$("#convEspecial").on('change', function () {
+  filterNonDestructive()
+})
+$("#convExtra").on('change', function () {
+  filterNonDestructive()
 })
 function load_socket() {
   socket = new WebSocket(HOST, "main");
@@ -78,9 +161,13 @@ function load_socket() {
     let msg = JSON.parse(event.data);
     if (msg.operation == "wssWelcome") {
       loadOptionsFromWss(msg.content.universidades[0])
+      initCalendar(msg.content.data[0])
     }
     if (msg.operation == 'updateFromDb') {
       loadFacultad(msg.content[0])
+    }
+    if (msg.operation == 'wssUpdate') {
+      initCalendar(msg.content.data[0])
     }
   });
 }

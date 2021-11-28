@@ -32,10 +32,10 @@ function buildTr(params) {
 }
 
 function loadTable(data) {
+    console.log(data)
     const regex = /[0-9]{4}-[0-9]{2}-[0-9]{2}/i;
     const table = document.querySelector("#mainTableShow")
     for (let i of data) {
-        console.log(i)
         let tr = buildTr([i.universidad, i.nombreExamen, regex.exec(i.fechaExamen), i.facultad, i.curso, i.convocatoriaEspecial, i.convocatoriaExtraordinaria])
         table.appendChild(tr)
     }
@@ -158,7 +158,7 @@ function load_socket() {
             loadUniMenuOptions(universidades[0])
         }
         if (msg.operation == "updateFromDb") {
-            if (msg.forServer = True) {
+            if (msg.forServer = true) {
                 loadOptions(msg.context, msg.content, msg.get)
             }
             
