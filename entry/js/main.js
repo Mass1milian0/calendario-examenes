@@ -1,6 +1,10 @@
-const HOST = location.origin.replace(/^http/, 'ws') + "/wss/";
-let socket
-function loadUniMenuOptions(options) {
+const HOST = location.origin
+const axiosApp = axios.create({
+    baseURL: HOST,
+});
+async function loadUniMenuOptions() {
+    let options = await axiosApp.get("/api/getDistinctGrados")
+    options = options.data.data[0]
     const uniMenu = document.querySelector("#universidad")
     for (let i of options) {
         let element = document.createElement("option");
@@ -8,7 +12,6 @@ function loadUniMenuOptions(options) {
         uniMenu.appendChild(element);
     }
 }
-
 function buildTr(params) {
     let element = document.createElement("tr")
     for (let i of params) {
@@ -20,24 +23,34 @@ function buildTr(params) {
     delBtn.classList.add("delBtn")
     delBtn.innerText = "Delete"
     delBtn.addEventListener("click", function () {
-        console.log(this)
-        socket.send(JSON.stringify({
-            operation: "sendToDb",
-            content: 'DELETE FROM examenes where universidad = "' + this.parentElement.cells[0].innerText + '" and facultad = "' + this.parentElement.cells[3].innerText + '" and nombreExamen = "' + this.parentElement.cells[1].innerText + '" and date(fechaExamen) = "' + this.parentElement.cells[2].innerText + '" and curso = ' + this.parentElement.cells[4].innerText
-        }))
+        axiosApp.post("/api/deleteData", {
+            universidad: this.parentElement.cells[0].innerHTML,
+            facultad: this.parentElement.cells[3].innerHTML,
+            nombreExamen: this.parentElement.cells[1].innerHTML,
+            fechaExamen: this.parentElement.cells[2].innerHTML,
+            curso: this.parentElement.cells[4].innerHTML
+        })
         this.parentElement.remove()
     })
     element.appendChild(delBtn);
     return element
 }
 
-function loadTable(data) {
-    console.log(data)
+async function loadTable(init = true, data = undefined) {
     const regex = /[0-9]{4}-[0-9]{2}-[0-9]{2}/i;
     const table = document.querySelector("#mainTableShow")
-    for (let i of data) {
-        let tr = buildTr([i.universidad, i.nombreExamen, regex.exec(i.fechaExamen), i.facultad, i.curso, i.convocatoriaEspecial, i.convocatoriaExtraordinaria])
-        table.appendChild(tr)
+    if (init) {
+        let data = await axiosApp.get("/api/getDataFromTable/examenes")
+        data = data.data.data[0]
+        for (let i of data) {
+            let tr = buildTr([i.universidad, i.nombreExamen, regex.exec(i.fechaExamen), i.facultad, i.curso, i.convocatoriaEspecial, i.convocatoriaExtraordinaria])
+            table.appendChild(tr)
+        }
+    } else {
+        for (let i of data) {
+            let tr = buildTr([i.universidad, i.nombreExamen, regex.exec(i.fechaExamen), i.facultad, i.curso, i.convocatoriaEspecial, i.convocatoriaExtraordinaria])
+            table.appendChild(tr)
+        }
     }
 }
 function addToTable(data) {
@@ -46,31 +59,55 @@ function addToTable(data) {
     let tr = buildTr([data.universidad, data.nombreExamen, regex.exec(data.fechaExamen), data.facultad, data.curso, data.convocatoriaEspecial, data.convocatoriaExtraordinaria])
     table.appendChild(tr)
 }
-function filterTableBy(filter) {
-    const table = document.querySelector("#mainTableShow")
-    for (let i of table.rows) {
-        if (!i.classList.contains("index")) {
-            if (i.cells[0].innerText != filter) {
-                i.classList.toggle("hidden")
+function reloadTable(data) {
+    document.querySelector("#mainTableShow").innerHTML =
+    `
+    <tr class="index">
+        <th>Universidad</th>
+        <th>Nombre</th>
+        <th>Fecha</th>
+        <th>Carrera</th>
+        <th>Curso</th>
+        <th>Especial</th>
+        <th>Extraordinaria</th>
+    </tr>
+    
+    `
+    loadTable(false,data)
+}
+async function filterTableBy() {
+    let activeFilters = []
+    let data = await axiosApp.get("/api/getDataFromTable/examenes")
+    data = data.data.data[0]
+    if (document.querySelector("#universidad").selectedIndex != 0) {
+        activeFilters.push((element) => {
+            if (element.universidad != document.querySelector("#universidad").options[document.querySelector("#universidad").selectedIndex].text) {
+                return true
             }
-        }
+        })
     }
-
-}
-function resetFilter() {
-    const table = document.querySelector("#mainTableShow")
-    for (let i of table.rows) {
-        if (!i.classList.contains("index")) {
-            i.classList.remove("hidden")
-        }
+    if (document.querySelector("#carrera").selectedIndex != 0) {
+        activeFilters.push((element) => {
+            if (element.facultad != document.querySelector("#carrera").options[document.querySelector("#carrera").selectedIndex].text) {
+                return true
+            }
+        })
     }
+    if (document.querySelector("#curso").selectedIndex != 0) {
+        activeFilters.push((element) => {
+            if (element.curso != document.querySelector("#curso").options[document.querySelector("#curso").selectedIndex].text[0]) {
+                return true
+            }
+        })
+    }
+    const filteredArray = data.filter((event) => activeFilters.every((filter) => !filter(event)));
+    reloadTable(filteredArray)
 }
-function loadOptions(context, options, get) {
-    console.log("Loading Options...");
-    let option = document.querySelector(context)
-    for (let i of options[0]) {
+function loadOptions(options) {
+    let option = document.querySelector("#carrera")
+    for (let i of options) {
         let element = document.createElement("option");
-        element.innerText = i[get]
+        element.innerText = i["facultad"]
         option.appendChild(element);
     }
 }
@@ -106,10 +143,9 @@ document.querySelector("#submit").addEventListener("click", function (e) {
         return
     }
     else {
-        socket.send(JSON.stringify({
-            operation: "sendToDb",
-            content: 'INSERT INTO `examenes` VALUES(' + '"' + universidad + '","' + facultad + '","' + nombreExamen + '","' + fechaExamen + '",' + convocatoriaEspecial + ',' + convocatoriaExtraordinaria + ',' + curso + ')'
-        }))
+        axiosApp.post("/api/postData", {
+            universidad, facultad, nombreExamen, fechaExamen, convocatoriaEspecial, convocatoriaExtraordinaria, curso
+        })
     }
     addToTable({ universidad, nombreExamen, fechaExamen, facultad, curso, convocatoriaEspecial, convocatoriaExtraordinaria })
 })
@@ -118,55 +154,31 @@ function resetOptions() {
     let selectors = document.querySelector("#carrera")
     selectors.innerHTML = "<option>Selecione Una</option>"
 }
-document.querySelector("#submit").addEventListener("click", function () {
-    //TODO connect dates to db
-})
 document.querySelector("#universidad").addEventListener("change", async function () {
-    console.log("Sent msg to WS");
     resetOptions()
     if (this.selectedIndex != 0) {
-        resetFilter()
         filterTableBy(this.options[this.selectedIndex].text)
-        socket.send(JSON.stringify({
-            operation: "getFromDb",
-            context: "#carrera",
-            get: "facultad",
-            forServer: true,
-            content: "SELECT facultad FROM facultades where universidad = '" + this.options[this.selectedIndex].text + "'"
-        }))
+        response = await axiosApp.post("/api/getSelectFromTable", {
+            table: "facultades",
+            data: "facultad",
+            condition1: "universidad",
+            condition2: this.options[this.selectedIndex].text
+        })
+    }
+    loadOptions(response.data.data[0])
+})
+document.querySelector("#carrera").addEventListener("change", async function () {
+    if (this.selectedIndex != 0) {
+        filterTableBy(this.options[this.selectedIndex].text)
+    }
+})
+document.querySelector("#curso").addEventListener("change", async function () {
+    if (this.selectedIndex != 0) {
+        filterTableBy(this.options[this.selectedIndex].text)
     }
 })
 
-
-load_socket();
-
-function load_socket() {
-    socket = new WebSocket(HOST, "main");
-
-    socket.addEventListener("open", function (event) {
-        console.log("connected");
-    });
-
-    socket.addEventListener("message", function (event) {
-        let msg = JSON.parse(event.data);
-        console.log("Recived message: " + msg);
-        if (msg.operation == "wssWelcome") {
-            console.log("recieved");
-            let universidades = msg.content.universidades;
-            let data = msg.content.data;
-            loadTable(data[0])
-            loadUniMenuOptions(universidades[0])
-        }
-        if (msg.operation == "updateFromDb") {
-            if (msg.forServer = true) {
-                loadOptions(msg.context, msg.content, msg.get)
-            }
-            
-        }
-        if (msg.operation == "ResponseFromDb") {
-            if (msg.type == "QueryResponse") {
-                console.log(msg.response)
-            }
-        }
-    });
-}
+window.onload = async function () {
+    await loadUniMenuOptions()
+    await loadTable()
+};

@@ -1,17 +1,7 @@
-// Require the framework and instantiate it
-const mysql = require('mysql2/promise');
 require('dotenv').config()
 const fastify = require('fastify')({ logger: false })
 const port = process.env.PORT || 3000
-fastify.register(require('fastify-websocket'))
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: process.env.DB_PASSWD,
-  database: 'xux6i28tzurvsxdc',
-  port: 3306
-});
-console.log("Connected!")
+const routes = require('./routes')
 
 const start = async () => {
   try {
@@ -28,47 +18,8 @@ fastify.register(require('fastify-static'), {
 fastify.get('/entry', function (req, reply) {
   return reply.sendFile('./entry/index.html')
 })
-
-function dbQuery(dataExpression) {
-  return pool.query(dataExpression)
-}
-
-fastify.get('/wss/', { websocket: true }, async (connection /* SocketStream */, req /* FastifyRequest */) => {
-  console.log("client connected!");
-  async function updateWss() {
-    connection.socket.send(JSON.stringify({
-      operation: "wssUpdate",
-      content: {
-        data: await dbQuery("SELECT * from `examenes`")
-      }
-    }))
-  }
-  connection.socket.send(JSON.stringify({
-    operation: "wssWelcome",
-    content: {
-      universidades: await dbQuery("SELECT DISTINCT universidad FROM `facultades`"),
-      data: await dbQuery("SELECT * from `examenes`")
-    }
-  }))
-  connection.socket.on('message', async message => {
-    let msg = JSON.parse(message)
-    if (msg.operation == "getFromDb") {
-      connection.socket.send(JSON.stringify({
-        operation: "updateFromDb",
-        context: msg.context,
-        get: msg.get,
-        forServer: msg.forServer,
-        content: await dbQuery(msg.content)
-      }))
-
-    }
-    if (msg.operation == "sendToDb" /* TODO on production origin check*/) {
-      let response = await dbQuery(msg.content)
-      connection.socket.send(JSON.stringify({
-        response: response
-      }), updateWss())
-    }
-  })
+routes.forEach((route, index) => {
+  fastify.route(route)
 })
 
 start()

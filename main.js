@@ -1,7 +1,8 @@
-const HOST = location.origin.replace(/^http/, 'ws') + "/wss/";
-let socket;
+const HOST = location.origin
+const axiosApp = axios.create({
+  baseURL: HOST,
+});
 let eventsCache;
-load_socket();
 function objectBuilderForCalendarEvents(universidad, facultad, nombreExamen, fechaExamen, convocatoriaEspecial, convocatoriaExtraordinaria, curso) {
   const regex = /[0-9]{4}-[0-9]{2}-[0-9]{2}/i;
   UID = universidad + "," + facultad + "," + nombreExamen + "," + curso + "," + convocatoriaEspecial + "," + convocatoriaExtraordinaria + "," + regex.exec(fechaExamen)
@@ -33,7 +34,7 @@ function objectBuilderForCalendarEvents(universidad, facultad, nombreExamen, fec
   }
   return event
 }
-function initCalendar(data, nonDestructive = false) {
+async function initCalendar(data,nonDestructive = false) {
   let destructed = false
   let lastDateSelected;
   let events = data
@@ -115,7 +116,9 @@ function resetOptions() {
   let selectors = document.querySelector("#grado")
   selectors.innerHTML = "<option>Selecione Una</option>"
 }
-function loadOptionsFromWss(data) {
+async function loadOptions() {
+  let data = await axiosApp.get("/api/getDistinctGrados")
+  data = data.data.data[0]
   const universidades = $('#university')
   for (let i of data) {
     universidades.append(buildOption(i.universidad))
@@ -127,15 +130,16 @@ function loadFacultad(data) {
     facultad.append(buildOption(i.facultad))
   }
 }
-$('#university').on('change', function () {
+$('#university').on('change', async function () {
   resetOptions()
-  socket.send(JSON.stringify({
-    operation: "getFromDb",
-    forServer: false,
-    context: "#carrera",
-    get: "facultad",
-    content: "SELECT facultad FROM facultades where universidad = '" + this.options[this.selectedIndex].text + "'"
-  }))
+  let data = await axiosApp.post("/api/getSelectFromTable", {
+    table: "facultades",
+    data: "facultad",
+    condition1: "universidad",
+    condition2: this.options[this.selectedIndex].text
+  })
+  data = data.data.data[0]
+  loadFacultad(data)
   filterNonDestructive()
 })
 $("#grado").on('change', function () {
@@ -150,24 +154,9 @@ $("#convEspecial").on('change', function () {
 $("#convExtra").on('change', function () {
   filterNonDestructive()
 })
-function load_socket() {
-  socket = new WebSocket(HOST, "main");
-
-  socket.addEventListener("open", function (event) {
-    console.log("connected");
-  });
-
-  socket.addEventListener("message", function (event) {
-    let msg = JSON.parse(event.data);
-    if (msg.operation == "wssWelcome") {
-      loadOptionsFromWss(msg.content.universidades[0])
-      initCalendar(msg.content.data[0])
-    }
-    if (msg.operation == 'updateFromDb') {
-      loadFacultad(msg.content[0])
-    }
-    if (msg.operation == 'wssUpdate') {
-      initCalendar(msg.content.data[0])
-    }
-  });
-}
+window.onload = async function () {
+  eventsCache = await axiosApp.get("/api/getDataFromTable/examenes")
+  eventsCache = eventsCache.data.data[0]
+  initCalendar(eventsCache)
+  loadOptions()
+};
