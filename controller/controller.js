@@ -2,11 +2,11 @@ const BannedOnGet = ["DELETE", "UPDATE", "INSERT"]
 const BannedEverywhere = ["DROP", "CREATE"]
 const mysql = require('mysql2/promise');
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
     password: process.env.DB_PASSWD,
-    database: 'xux6i28tzurvsxdc',
-    port: 3306
+    database: process.env.DB_NAME_SERVER,
+    port: process.env.DB_PORT
 });
 console.log("Controller connected!")
 function dbQuery(dataExpression) {

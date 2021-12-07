@@ -11,11 +11,11 @@ const port = process.env.PORT || 3000
 const routes = require('./routes')
 const mysql = require('mysql2/promise');
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
   password: process.env.DB_PASSWD,
-  database: 'users',
-  port: 3306
+  database: process.env.DB_NAME_CONTROLLER,
+  port: process.env.DB_PORT
 });
 console.log("Server Connected!")
 function dbQuery(dataExpression) {
