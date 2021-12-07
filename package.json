@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "create-key": "npx fastify-secure-session > secret-key && npm run start",
-    "start": "node server.js"
+    "build": "npx fastify-secure-session > secret-key"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
