@@ -4,7 +4,6 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-./secret-key
 
 # Runtime data
 pids
@@ -75,3 +74,4 @@ typings/
 
 # FuseBox cache
 .fusebox/
+secret-key
