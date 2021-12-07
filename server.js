@@ -127,6 +127,7 @@ const adminRoutes = [
 
 const start = async () => {
   try {
+    console.log('listening on port: ' + port)
     await fastify.listen(port, '0.0.0.0')
   } catch (err) {
     console.error(err)
