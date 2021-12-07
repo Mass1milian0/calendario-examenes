@@ -112,7 +112,7 @@ function loadOptions(options) {
     }
 }
 
-document.querySelector("#submit").addEventListener("click", function (e) {
+document.querySelector("#submit").addEventListener("click", async function (e) {
     let invalid = false
     let universidad = document.querySelector("#universidad").options[document.querySelector("#universidad").selectedIndex].text
     let facultad = document.querySelector("#carrera").options[document.querySelector("#carrera").selectedIndex].text
@@ -143,7 +143,8 @@ document.querySelector("#submit").addEventListener("click", function (e) {
         return
     }
     else {
-        axiosApp.post("/api/postData", {
+        console.log("sent post request to server for data")
+        await axiosApp.post("/api/postData", {
             universidad, facultad, nombreExamen, fechaExamen, convocatoriaEspecial, convocatoriaExtraordinaria, curso
         })
     }

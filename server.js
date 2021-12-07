@@ -50,9 +50,9 @@ fastifyPassport.use('login', new passportLocal(function (username, password, don
     return done(error);
   })
 }))
-const postData = async (req, reply, err, user, info, status) => {
-  if (err !== null) { console.warn("ah habido un error: " + err) }
-  else if (user) {
+const postData = async (req, reply) => {
+  if (!req.user) { reply.send(403) }
+  else {
     const params = req.body
     const newData = {
       universidad: params.universidad,
@@ -68,17 +68,15 @@ const postData = async (req, reply, err, user, info, status) => {
     return reply.send({ status: 200, newData, response })
   }
 }
-const deleteData = async (req, reply, err, user, info, status) => {
-  if (err !== null) { console.warn("ah habido un error: " + err) }
-  else if (user) {
+const deleteData = async (req, reply) => {
+  if (!req.user) { reply.send(403) }
+  else {
     const { universidad, facultad, nombreExamen, fechaExamen, curso } = req.body
-
-    const response = await dbQuery(`DELETE FROM \`examenes\` WHERE universidad= "${universidad}","${facultad}","${nombreExamen}","${fechaExamen}",${curso}`)
+    const response = await dbQuery(`DELETE FROM \`examenes\` WHERE universidad="${universidad}" and facultad="${facultad}" and nombreExamen="${nombreExamen}" and fechaExamen="${fechaExamen}" and curso=${curso}`)
     return reply.send({ status: 200, response })
   }
 }
-const logout = async (req, reply, err, user, info, status) => {
-  if (err !== null) { console.warn("ah habido un error: " + err) }
+const logout = async (req, reply) => {
   if (!req.user) { reply.redirect("/login") }
   req.logout()
   reply.redirect("/")
