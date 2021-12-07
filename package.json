@@ -2,12 +2,21 @@
   "name": "front-discord",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "create-key": "npx fastify-secure-session > secret-key && npm run start",
+    "start": "node server.js"
+  },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "core-js": "^3.15.1",
     "dotenv": "^10.0.0",
     "fastify": "^3.22.1",
+    "fastify-cors": "^6.0.2",
+    "fastify-passport": "^0.4.3",
+    "fastify-secure-session": "^3.0.0",
     "fastify-static": "^4.4.2",
-    "mysql2": "^2.3.2"
+    "mysql2": "^2.3.2",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "postcss": "^8.3.5"

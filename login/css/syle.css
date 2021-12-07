@@ -1,0 +1,8 @@
+.centered {
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 30%;
+  transform: translateY(-40%) translateX(-50%);
+}
