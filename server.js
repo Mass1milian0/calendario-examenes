@@ -14,7 +14,7 @@ const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWD,
-  database: process.env.DB_NAME_CONTROLLER,
+  database: process.env.DB_NAME_SERVER,
   port: process.env.DB_PORT
 });
 console.log("Server Connected!")
